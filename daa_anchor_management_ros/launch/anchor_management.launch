@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<launch>
+  <group ns="mobipick">
+    <node name="daa_anchor_management" pkg="daa_anchor_management_ros" type="anchor_management_node.py" output="screen" clear_params="true">
+      <!-- <param name="config_filename"          value="$(find daa_tracker_ros)/config/mht_config_maker_space.yaml" /> -->
+
+      <!-- <remap from="~tracks"     to="daa_tracker/tracks" /> -->
+    </node>
+
+    <!-- <node name="color_classification_node" pkg="daa_color_classification" type="color_classification_node" output="screen" /> -->
+
+
+  </group>
+</launch>

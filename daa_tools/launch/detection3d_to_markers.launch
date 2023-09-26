@@ -1,0 +1,13 @@
+<launch>
+  <arg name="class_ids_config"        default="$(find pbr_objects)/config/class_ids.yaml"     doc="Path to class ids config file"/>
+  <arg name="draw_colors_config"      default="$(find pbr_objects)/config/draw_colors.yaml"   doc="Path to marker draw colors config file"/>
+  <arg name="meshes_config"           default="$(find pbr_objects)/config/meshes.yaml"        doc="Path to meshes config file"/>
+
+  <node name="detection3d_to_markers" pkg="daa_tools" type="detection3d_to_markers.py" output="screen" clear_params="true">
+    <rosparam file="$(arg class_ids_config)" />
+    <rosparam file="$(arg draw_colors_config)" />
+    <rosparam file="$(arg meshes_config)" />
+
+    <remap from="detected_objects" to="/mobipick/dope/detected_objects" />
+  </node>
+</launch>

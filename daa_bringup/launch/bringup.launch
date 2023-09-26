@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<launch>
+    <include file="$(find pbr_dope)/launch/dope.launch"/>
+
+    <include file="$(find daa_knowledge_base_ros)/launch/knowledge_base.launch"/>
+    <include file="$(find daa_anchor_management_ros)/launch/anchor_management.launch"/>
+    <group ns="mobipick">
+        <node name="daa_tracker" pkg="daa_tracker_ros" type="tracker_node" output="screen" clear_params="true">
+        <param name="use_color_classification" value="false" />
+        <param name="odom_frame"               value="mobipick/odom" />
+        <param name="config_filename"          value="$(find daa_tracker_ros)/config/mht_config_maker_space.yaml" />
+
+        <remap from="~image_rect_color"     to="eef_main_cam/rgb/image_raw" />
+        <remap from="~camera_info"          to="eef_main_cam/rgb/camera_info" />
+        <remap from="~detected_objects"     to="dope/detected_objects" />
+        <remap from="~color_classification" to="color_classification" />
+        </node>
+    </group>
+
+        <!-- <node name="color_classification_node" pkg="color_classification" type="color_classification_node" output="screen" /> -->
+
+
+
+</launch>

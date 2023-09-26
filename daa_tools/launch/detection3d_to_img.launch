@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<launch>
+  <arg name="class_ids_config"        default="$(find pbr_objects)/config/class_ids.yaml"     doc="Path to class ids config file"/>
+  <arg name="draw_colors_config"      default="$(find pbr_objects)/config/draw_colors.yaml"   doc="Path to marker draw colors config file"/>
+
+  <node name="detection3d_to_img" pkg="daa_tools" type="detection3d_to_img.py" output="screen" clear_params="true" ns="mobipick">
+    <rosparam file="$(arg class_ids_config)" />
+    <rosparam file="$(arg draw_colors_config)" />
+
+    <remap from="~image_rect_in"       to="gripper_astra/rgb/image_rect_color" />
+    <remap from="~camera_info_in"      to="gripper_astra/rgb/camera_info" />
+    <remap from="~detected_objects_in" to="dope/detected_objects" />
+  </node>
+</launch>

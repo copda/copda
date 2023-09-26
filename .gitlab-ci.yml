@@ -1,0 +1,84 @@
+stages:
+  - build_docker
+  - build
+
+build_docker:
+  image: docker:stable-git
+  stage: build_docker
+  tags:
+    - docker
+  variables:
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:anchoring-agent
+    DOCKER_DRIVER: overlay2
+  only:   # see https://docs.gitlab.com/ee/ci/yaml/#onlychangesexceptchanges
+    refs:
+      - anchoring-agent
+    changes:
+      - Dockerfile
+      - "*/package.xml"
+      - dependencies.rosinstall
+      - install-deps.sh
+      - build.sh
+      - .pre-commit-config.yaml
+
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build --pull --build-arg CI_JOB_TOKEN=$CI_JOB_TOKEN -t $IMAGE_TAG .
+    - docker push $IMAGE_TAG
+
+build:
+  stage: build
+  tags:
+    - docker
+  variables:
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:anchoring-agent
+  image: $IMAGE_TAG
+  cache:
+    paths:
+      - .ccache/
+  before_script:
+    # Enable system-wide authentication for git cloning via https
+    - '[ ! -z "$CI_DISPOSABLE_ENVIRONMENT" ] && echo -e "machine git.ni.dfki.de\nlogin gitlab-ci-token\npassword ${CI_JOB_TOKEN}" > ~/.netrc'
+
+    # Enable caching of APT packages (only works for packages.ubuntu.com and packages.ros.org)
+    - echo "Acquire::http::Proxy \"http://apt-cache.ni.dfki:8000\";" | sudo tee /etc/apt/apt.conf.d/00proxy
+  script:
+    - export CATKIN_WS=~/catkin_ws
+    - export CATKIN_WS_SRC=${CATKIN_WS}/src
+    - export CATKIN_PROJECT_DIR=$CATKIN_WS_SRC/copda
+
+    # create a catkin workspace and clone all required ROS packages
+    - mkdir -p $CATKIN_WS_SRC
+    - cd $CATKIN_WS_SRC/
+    - rm -rf $CATKIN_PROJECT_DIR
+    - ln -s $CI_PROJECT_DIR $CATKIN_PROJECT_DIR   # outside CI, run this instead: git clone -b anchoring-agent git@git.ni.dfki.de:copda/copda.git
+
+    # install dependencies
+    - $CATKIN_PROJECT_DIR/install-deps.sh
+
+    # build
+    - export PATH="/usr/lib/ccache:$PATH"
+    - export CCACHE_DIR=${CI_PROJECT_DIR}/.ccache
+    - echo "================= ccache stats (before build) ================="
+    - ccache -s
+    - echo "==============================================================="
+    - $CATKIN_PROJECT_DIR/build.sh
+    - echo "================= ccache stats (after build) =================="
+    - ccache -s
+    - echo "==============================================================="
+
+    # Run pre-commit tests
+    - cd $CATKIN_WS
+    - source devel/setup.bash
+    - cd $CATKIN_PROJECT_DIR
+    - pre-commit run -a
+
+    # NOTE on testing: `catkin_make run_tests` will show the output of the tests
+    # (gtest, nosetest, etc..) but always returns 0 (success) even if a test
+    # fails. Running `catkin_test_results` aggregates all the results and returns
+    # non-zero when a test fails (which notifies Gitlab CI that the build failed).
+    - cd $CATKIN_WS
+    - catkin build --limit-status-rate 0.1 --no-notify --make-args tests
+    - source devel/setup.bash
+    - catkin run_tests --limit-status-rate 0.1 --no-notify
+    - catkin_test_results

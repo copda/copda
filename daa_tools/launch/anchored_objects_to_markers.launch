@@ -1,0 +1,11 @@
+<launch>
+  <arg name="class_ids_config"        default="$(find pbr_objects)/config/class_ids.yaml"     doc="Path to class ids config file"/>
+  <arg name="meshes_config"           default="$(find pbr_objects)/config/meshes.yaml"        doc="Path to meshes config file"/>
+
+  <node name="anchored_objects_to_markers" pkg="daa_tools" type="anchored_objects_to_markers.py" output="screen" clear_params="true" ns="mobipick" >
+    <rosparam file="$(arg class_ids_config)" />
+    <rosparam file="$(arg meshes_config)" />
+
+    <remap from="markers" to="anchored_object_markers" />
+  </node>
+</launch>

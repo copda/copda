@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<launch>
+  <group ns="mobipick">
+    <node name="daa_tracker" pkg="daa_tracker_ros" type="tracker_node" output="screen" clear_params="true">
+      <param name="use_color_classification" value="false" />
+      <param name="odom_frame"               value="mobipick/odom" />
+      <param name="config_filename"          value="$(find daa_tracker_ros)/config/mht_config_maker_space.yaml" />
+
+      <remap from="~image_rect_color"     to="gripper_astra/rgb/image_rect_color" />
+      <remap from="~camera_info"          to="gripper_astra/rgb/camera_info" />
+      <remap from="~detected_objects"     to="dope/detected_objects" />
+      <remap from="~color_classification" to="color_classification" />
+    </node>
+
+    <!-- <node name="color_classification_node" pkg="daa_color_classification" type="color_classification_node" output="screen" /> -->
+
+
+  </group>
+</launch>

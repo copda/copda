@@ -1,0 +1,77 @@
+
+scenario: "maker_space"
+with_ros: true
+odom_frame: "mobipick/odom"
+colors: {
+  "0": "Traffic Red",
+  "1": "Traffic Yellow",
+  "2": "Yellow Green",
+  "3": "Traffic Green",
+  "4": "Blue",
+  "5": "Purple",
+  "6": "Telemagenta",
+}
+weights: {
+  "topo_score": 3.,
+  "percept_score": 1.,
+}
+prolog_files: ["reload.pl","rules.pl"]
+rule_file: "rules.pl"
+reload_file: "reload.pl"
+class_ids: {
+    "cracker": 103,                # YCB object 003
+    "sugar":   104,                # YCB object 004
+    "soup":    105,                # YCB object 005
+    "mustard": 106,                # YCB object 006
+    "gelatin": 109,                # YCB object 009
+    "meat":    110,                # YCB object 010
+    "bleach":  121,                # YCB object 021
+    "power_drill":   2,
+    "klt": 6,
+    "multimeter": 7,
+    "relay": 8,
+    "screwdriver": 9,
+    "materialbox": 10,
+    "hot_glue_gun": 11,
+}
+
+location_offset: [10.305, 2.395, -0.010]
+table_locations: {
+  "table_1": [13.22, 2.15, 0.00],
+  "table_2": [12.07, 3.25, 0.00],
+  "table_3": [10.42, 3.25, 0.00],
+}
+table_sizes: {
+  "table_1": [0.70, 1.40, 0.70],
+  "table_2": [1.40, 0.70, 0.70],
+  "table_3": [1.40, 0.70, 0.70],
+}
+max_count: {
+    "klt": 3,
+    "power_drill": 2,
+    "multimeter": 1,
+    "relay": 1,
+    "screwdriver": 1,
+}
+onto_config: {
+  "onto_uri": "http://dfki.ipr.de/onto",
+  # Cuboid dimension in cm x,y,z
+  "dimensions": {
+      "unit": "cm",
+      "cracker": [16.403600692749023,21.343700408935547,7.179999828338623],
+      "sugar": [9.267730712890625,17.625339508056641,4.5134143829345703],
+      "soup": [6.7659378051757813,10.185500144958496,6.771425724029541],
+      "mustard": [9.6024150848388672,19.130100250244141,5.824894905090332],
+      "gelatin": [8.918299674987793, 7.311500072479248, 2.9983000755310059],
+      "meat": [10.164673805236816,8.3542995452880859,5.7600898742675781],
+      "bleach": [10.243300437927246, 25.058000564575195, 6.769899845123291],
+      "getriebelager": [10.569199562072754, 26.933900833129883, 14.880499839782715],
+      "getriebelager_wob": [ 9.375, 27.020000457763672, 18.188800811767578 ],
+      "rexroth_nexo_power_drill": [ 29.552999496459961, 8.2267999649047852, 22.676700592041016 ],
+      "power_drill": [ 18.436100006103516, 18.683599472045898, 5.7192001342773438 ],
+      "hydroaggregat": [ 14.371600151062012, 23.156400680541992, 13.352800369262695 ],
+      "power_drill_with_grip": [ 18.002399444580078, 22.317399978637695, 8.2321996688842773 ],
+      "klt": [ 14.699999809265137, 19.700000762939453, 29.700000762939453 ],
+  },
+
+}

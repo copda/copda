@@ -1,0 +1,8 @@
+- git:
+    local-name: pbr_dope
+    uri: https://git.ni.dfki.de/perception/pbr_dope.git
+    version: master
+- git:
+    local-name: pbr_objects
+    uri: https://github.com/DFKI-NI/pbr_objects.git
+    version: master

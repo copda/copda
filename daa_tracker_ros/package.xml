@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>daa_tracker_ros</name>
+  <version>0.0.0</version>
+  <description>A tracker based on multiple hypothesis tracking (MHT) for the CoPDA DAA.</description>
+
+  <maintainer email="Zongyao.Yi@dfki.de">Zongyao Yi</maintainer>
+
+  <author email="Zongyao.Yi@dfki.de">Zongyao Yi</author>
+  <author email="martin.guenther@dfki.de">Martin Günther</author>
+
+  <license>BSD-3-Clause</license>
+  <license>BSD-2-Clause</license>
+  <license>GPL-2.0-or-later</license>
+  <!-- TODO: Specify file paths once ros-infrastructure/rep#347 is supported by all tools (like catkin_lint)
+    <license source-files="src/daa_tracker/src/problib/*">BSD-2-Clause</license>
+    <license source-files="src/daa_tracker/include/utils/KalmanFilter.h">BSD-2-Clause</license>
+    <license source-files="src/daa_tracker/src/utils/KalmanFilter.cpp">BSD-2-Clause</license>
+    <license source-files="src/daa_tracker/src/cliquer/src/*">GPL-2.0-or-later</license>
+  -->
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>message_generation</build_depend>
+  <build_depend>roslaunch</build_depend>
+
+  <depend>armadillo</depend>
+  <depend>cv_bridge</depend>
+  <depend>daa_color_classification</depend>
+  <depend>eigen</depend>
+  <depend>image_geometry</depend>
+  <depend>image_transport</depend>
+  <depend>libgoogle-glog-dev</depend>
+  <depend>libopencv-dev</depend>
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>tf</depend>
+  <depend>vision_msgs</depend>
+  <depend>visualization_msgs</depend>
+  <depend>yaml-cpp</depend>
+
+  <exec_depend>message_runtime</exec_depend>
+  <exec_depend>nodelet</exec_depend>
+  <exec_depend>openni2_launch</exec_depend>
+  <exec_depend>pbr_objects</exec_depend>
+  <exec_depend>pcl_ros</exec_depend>
+  <exec_depend>rgbd_launch</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>topic_tools</exec_depend>
+</package>

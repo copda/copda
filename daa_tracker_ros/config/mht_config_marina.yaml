@@ -1,0 +1,34 @@
+#tree params
+params: {
+    # debug params
+    "output_path": "output_debug/",
+    #
+    gate_area: 20.0,
+    # KF params
+    "a_max": 0.3,
+    #pruning params
+    "min_score": 50,
+    "n_scan": 5,
+    "n_miss": 11,
+    "k_best": 0.5, #select the top k_best% best tracks
+    "b_th": 10, #prune tree when it has more than b_th branches
+}
+behavioral_model: {
+    "position": KalmanFilter,
+    "class_id": Fixed,
+}
+#object classes
+class_name_map: {
+    9: "boat",
+}
+
+priors: {
+    "obvervation_noise": 5.0,
+    "prob_detection": 0.4,
+    "prob_false_alarm": 3.2552e-06,
+    "prob_position": 1.,
+    "prob_class_id": 1.,
+
+    "decay_factor_position": 1,
+    "decay_factor_class_id": 0,
+}

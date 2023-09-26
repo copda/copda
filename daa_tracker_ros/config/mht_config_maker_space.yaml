@@ -1,0 +1,55 @@
+#tree params
+params: {
+    # debug params
+    "output_path": "output_debug/",
+    #
+    gate_area: 0.3,
+    # KF params
+    "a_max": 0.3,
+    #pruning params
+    "min_score": 50,
+    "n_scan": 5,
+    "n_miss": 11,
+    "k_best": 0.5, #select the top k_best% best tracks
+    "b_th": 10, #prune tree when it has more than b_th branches
+}
+behavioral_model: {
+    "position": KalmanFilter,
+    "class_id": Fixed,
+    "color_histogram": HistogramEstimator,
+}
+#object classes
+class_name_map: {
+    103: "cracker",                # YCB object 003
+    104: "sugar",                # YCB object 004
+    105: "soup",                # YCB object 005
+    106: "mustard",                # YCB object 006
+    109: "gelatin",                # YCB object 009
+    110: "meat",                # YCB object 010
+    121: "bleach",                # YCB object 021
+    1: "getriebelager",            # ID widely used
+    2: "power_drill",            # ID widely used
+    3: "getriebelager_wob",
+    4: "rexroth_nexo_power_drill",
+    5: "hydroaggregat",
+    #"power_drill_with_grip":   2,  # same ad power_drill, don't enable both...
+    6: "klt",
+    7: "multimeter",
+    8: "relay",
+    9: "screwdriver",
+    10: "materialbox",
+    11: "hot_glue_gun",
+}
+
+priors: {
+    "obvervation_noise": 0.005,
+    "prob_detection": 0.6,
+    "prob_false_alarm": 3.2552e-06,
+    "prob_position": 1.,
+    "prob_class_id": 1.,
+    "prob_color_histogram": 8.,
+
+    "decay_factor_position": 1,
+    "decay_factor_class_id": 0,
+    "decay_factor_color_histogram": 0.1,
+}
