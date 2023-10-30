@@ -32,7 +32,7 @@ table_sizes: {
   "table_4": [0.80, 0.80, 0.72],
 }
 max_count: {
-    "klt": 3,
+    "klt": 10,
     "power_drill_with_grip": 2,
     "multimeter": 1,
     "relay": 1,
