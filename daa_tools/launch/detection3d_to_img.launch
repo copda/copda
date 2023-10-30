@@ -7,8 +7,8 @@
     <rosparam file="$(arg class_ids_config)" />
     <rosparam file="$(arg draw_colors_config)" />
 
-    <remap from="~image_rect_in"       to="gripper_astra/rgb/image_rect_color" />
-    <remap from="~camera_info_in"      to="gripper_astra/rgb/camera_info" />
+    <remap from="~image_rect_in"       to="eef_main_cam/rgb/image_rect_color" />
+    <remap from="~camera_info_in"      to="eef_main_cam/rgb/camera_info" />
     <remap from="~detected_objects_in" to="dope/detected_objects" />
   </node>
 </launch>

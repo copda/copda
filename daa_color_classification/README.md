@@ -11,7 +11,7 @@ Package overview
 
 * /mobipick/dope/instance_seg_image
 * /mobipick/dope/detected_objects
-* /mobipick/gripper_astra/rgb/image_rect_color
+* /mobipick/eef_main_cam/rgb/image_rect_color
 
 ### Published topics
 

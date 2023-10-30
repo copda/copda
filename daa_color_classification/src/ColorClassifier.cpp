@@ -47,11 +47,11 @@ ColorClassifier::ColorClassifier(ros::NodeHandle* pNh) : pNh_(pNh), it_(*pNh)
 {
   pSeg_image_sub_ = make_shared<message_filters::Subscriber<Image>>(*pNh_, "/mobipick/dope/instance_seg_image", 1);
   pRgb_image_sub_ =
-      make_shared<message_filters::Subscriber<Image>>(*pNh_, "/mobipick/gripper_astra/rgb/image_rect_color", 1);
+      make_shared<message_filters::Subscriber<Image>>(*pNh_, "/mobipick/eef_main_cam/rgb/image_rect_color", 1);
   pObj_detect_sub_ =
       make_shared<message_filters::Subscriber<Detection3DArray>>(*pNh_, "/mobipick/dope/detected_objects", 1);
   pCam_info_sub_ =
-      make_shared<message_filters::Subscriber<CameraInfo>>(*pNh_, "/mobipick/gripper_astra/rgb/camera_info", 1);
+      make_shared<message_filters::Subscriber<CameraInfo>>(*pNh_, "/mobipick/eef_main_cam/rgb/camera_info", 1);
 
   pSync_ = std::make_shared<message_filters::TimeSynchronizer<Image, Image, Detection3DArray, CameraInfo>>(
       *pSeg_image_sub_, *pRgb_image_sub_, *pObj_detect_sub_, *pCam_info_sub_, 10);
