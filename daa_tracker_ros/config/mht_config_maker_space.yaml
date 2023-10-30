@@ -28,11 +28,10 @@ class_name_map: {
     110: "meat",                # YCB object 010
     121: "bleach",                # YCB object 021
     1: "getriebelager",            # ID widely used
-    2: "power_drill",            # ID widely used
+    2: "power_drill_with_grip",            # ID widely used
     3: "getriebelager_wob",
     4: "rexroth_nexo_power_drill",
     5: "hydroaggregat",
-    #"power_drill_with_grip":   2,  # same ad power_drill, don't enable both...
     6: "klt",
     7: "multimeter",
     8: "relay",

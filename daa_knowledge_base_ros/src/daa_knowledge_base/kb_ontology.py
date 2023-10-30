@@ -182,7 +182,7 @@ class KB_Ontology:
                 self.class_dict.update(
                     {
                         'klt': KLT,
-                        'power_drill': Powerdrill,
+                        'power_drill_with_grip': Powerdrill,
                         'mustard': Mustard,
                         'sugar': Sugar,
                         'cracker': Cracker,

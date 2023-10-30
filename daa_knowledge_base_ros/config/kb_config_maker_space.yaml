@@ -31,7 +31,7 @@ table_sizes: {
 }
 max_count: {
     "klt": 3,
-    "power_drill": 2,
+    "power_drill_with_grip": 2,
     "multimeter": 1,
     "relay": 1,
     "screwdriver": 1,

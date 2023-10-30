@@ -92,7 +92,7 @@ class KBHandle:
         if scenario == "maker_space":
             self.class_dict = {
                 'klt': self.onto.KLT,
-                'power_drill': self.onto.Powerdrill,
+                'power_drill_with_grip': self.onto.Powerdrill,
                 'mustard': self.onto.Mustard,
                 'sugar': self.onto.Sugar,
                 'cracker': self.onto.Cracker,
