@@ -1,9 +1,8 @@
 <?xml version="1.0" ?>
 <launch>
-    <include file="$(find pbr_dope)/launch/dope.launch"/>
-
     <include file="$(find daa_knowledge_base_ros)/launch/knowledge_base.launch"/>
     <include file="$(find daa_anchor_management_ros)/launch/anchor_management.launch"/>
+
     <group ns="mobipick">
         <node name="daa_tracker" pkg="daa_tracker_ros" type="tracker_node" output="screen" clear_params="true">
         <param name="use_color_classification" value="false" />
@@ -16,9 +15,4 @@
         <remap from="~color_classification" to="color_classification" />
         </node>
     </group>
-
-        <!-- <node name="color_classification_node" pkg="color_classification" type="color_classification_node" output="screen" /> -->
-
-
-
 </launch>
