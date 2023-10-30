@@ -116,12 +116,9 @@ class KBHandle:
         if config.get("table_locations") and config.get("table_sizes"):
             table_locations = config.get("table_locations")
             table_sizes = config.get("table_sizes")
-            location_offset = config.get("location_offset")
-            location_offset = np.array(location_offset)
             for table_name, location in table_locations.items():
                 table_size = np.array(table_sizes[table_name])
-                location = -np.array(location)
-                location += location_offset
+                location = np.array(location)
                 confine = np.stack([-table_size / 2 + location, table_size / 2 + location], axis=1)
                 confine[2] = np.array([table_size[2], table_size[2] + 0.5])
                 table_instance = self.onto.Table(table_name)

@@ -18,7 +18,6 @@ weights: {
 prolog_files: ["reload.pl","rules.pl"]
 rule_file: "rules.pl"
 reload_file: "reload.pl"
-location_offset: [10.305, 2.395, -0.010]
 table_locations: {
   "table_1": [13.22, 2.15, 0.00],
   "table_2": [12.07, 3.25, 0.00],
