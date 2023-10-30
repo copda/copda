@@ -18,15 +18,18 @@ weights: {
 prolog_files: ["reload.pl","rules.pl"]
 rule_file: "rules.pl"
 reload_file: "reload.pl"
+# table locations + sizes from mobipick_labs/tables_demo_bringup/config/ai_day_planning_scene.yaml
 table_locations: {
-  "table_1": [13.22, 2.15, 0.00],
-  "table_2": [12.07, 3.25, 0.00],
-  "table_3": [10.42, 3.25, 0.00],
+  "table_1": [19.0, 15.16, 0.36],
+  "table_2": [19.9, 13.29, 0.3575],
+  "table_3": [20.84, 13.29, 0.3575],
+  "table_4": [22.14, 15.23, 0.36],
 }
 table_sizes: {
-  "table_1": [0.70, 1.40, 0.70],
-  "table_2": [1.40, 0.70, 0.70],
-  "table_3": [1.40, 0.70, 0.70],
+  "table_1": [0.80, 1.60, 0.72],
+  "table_2": [0.80, 0.80, 0.715],
+  "table_3": [0.80, 0.80, 0.715],
+  "table_4": [0.80, 0.80, 0.72],
 }
 max_count: {
     "klt": 3,
