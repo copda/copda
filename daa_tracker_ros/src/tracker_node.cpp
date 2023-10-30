@@ -43,7 +43,7 @@ TrackerNode::TrackerNode() : tracker_(daa::multi_hyp_tracker::MultiHypTracker::c
   // Params
   bool use_color_classification;
   nh_priv_.param<bool>("use_color_classification", use_color_classification, false);
-  nh_priv_.param<std::string>("odom_frame", odom_frame_, "odom");
+  nh_priv_.param<std::string>("global_frame", global_frame_, "map");
 
   // TODO: use ROS parameters instead of config file
   //  The best way to do this is probably to make a subclass of Client and override get_param, get_prior,
@@ -134,7 +134,7 @@ void TrackerNode::image_color_callback(
     auto orientation = pose.orientation;
 
     // transform the pos to map coordinates
-    std::string const target_frame = odom_frame_;
+    std::string const target_frame = global_frame_;
     std::string const source_frame = detected_objs->header.frame_id;
     auto stamp = detected_objs->header.stamp;
     tf::Point const tf_point(bbox_center_3d.x, bbox_center_3d.y, bbox_center_3d.z);

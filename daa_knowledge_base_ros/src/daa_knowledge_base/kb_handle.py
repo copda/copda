@@ -112,9 +112,7 @@ class KBHandle:
             raise RuntimeError
         self.object_count = {}
         self.object_max_count = config.get("max_count")
-        # Quick hack for setting up the tables, this should be removed
-        # TODO: Init table locations in odom frame, since tracker outputs
-        # results in the odom frame
+        # Tables are specified in the global_frame.
         if config.get("table_locations") and config.get("table_sizes"):
             table_locations = config.get("table_locations")
             table_sizes = config.get("table_sizes")

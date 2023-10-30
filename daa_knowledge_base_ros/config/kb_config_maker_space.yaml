@@ -1,7 +1,7 @@
 
 scenario: "maker_space"
 with_ros: true
-odom_frame: "mobipick/odom"
+global_frame: "map"
 colors: {
   "0": "Traffic Red",
   "1": "Traffic Yellow",

@@ -61,7 +61,7 @@ private:
 
   // this needs to be a member variable to take advantage of the internal caches
   image_geometry::PinholeCameraModel camera_model_;
-  std::string odom_frame_;
+  std::string global_frame_;
 
   tf::TransformListener tf_;
   std::shared_ptr<ros::Publisher> track_pub_;

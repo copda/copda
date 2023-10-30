@@ -71,7 +71,7 @@ class KnowledgeBasePublisher:
             print("Service call failed: %s" % e)
             return
         anchored_objects_msg = AnchoredObjectArray()
-        anchored_objects_msg.header.frame_id = self._config["odom_frame"]
+        anchored_objects_msg.header.frame_id = self._config["global_frame"]
         pose_selector_objects_msgs = ObjectList()
         for symbol, percepts in all_instances.items():
             obj_msg = AnchoredObject()
