@@ -5,12 +5,14 @@
       <!-- <param name="config_filename"          value="$(find daa_tracker_ros)/config/mht_config_maker_space.yaml" /> -->
       <rosparam file="$(find daa_knowledge_base_ros)/config/kb_config_maker_space.yaml"/>
       <rosparam file="$(find pbr_objects)/config/dimensions.yaml" param="onto_config"/>
+      <rosparam file="$(find pbr_objects)/config/model_transforms.yaml"/>
       <rosparam file="$(find pbr_objects)/config/class_ids.yaml"/>
       <!-- <remap from="~tracks"     to="daa_tracker/tracks" /> -->
     </node>
     <node name="knowledge_base_publisher" pkg="daa_knowledge_base_ros" type="knowledge_base_publisher.py" output="screen" clear_params="true">
       <rosparam file="$(find daa_knowledge_base_ros)/config/kb_config_maker_space.yaml"/>
       <rosparam file="$(find pbr_objects)/config/dimensions.yaml" param="onto_config"/>
+      <rosparam file="$(find pbr_objects)/config/model_transforms.yaml"/>
       <rosparam file="$(find pbr_objects)/config/class_ids.yaml"/>
     </node>
 

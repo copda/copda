@@ -29,4 +29,5 @@
   <exec_depend>python3-rospkg</exec_depend>
   <exec_depend>python3-simplejson</exec_depend>
   <exec_depend>swi-prolog</exec_depend>
+  <exec_depend>tf</exec_depend>
 </package>

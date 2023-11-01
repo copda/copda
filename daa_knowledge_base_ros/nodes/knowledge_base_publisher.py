@@ -30,10 +30,12 @@
 
 import rospy
 import json
+import numpy as np
 from collections import defaultdict
 from object_pose_msgs.msg import ObjectList, ObjectPose
 from daa_msgs.msg import AnchoredObjectArray, AnchoredObject
 from daa_knowledge_base_ros.srv import Query, QueryRequest
+import tf.transformations
 
 
 class KnowledgeBasePublisher:
@@ -50,6 +52,49 @@ class KnowledgeBasePublisher:
             return len(self._instance_ids) + 1
 
         self._instance_ids = defaultdict(next_instance_id)
+        self._dimensions = self._make_dimensions()
+
+    def _make_dimensions(self):
+        class DefaultDictWithArgs(dict):
+            def __init__(self, factory):
+                super().__init__()
+                self.factory = factory
+
+            def __missing__(self, key):
+                self[key] = self.factory(key)
+                return self[key]
+
+        def get_model_transform(model):
+            try:
+                M = np.array(rospy.get_param('~model_transforms')[model], dtype='float64')
+                return tf.transformations.quaternion_from_matrix(M)
+            except KeyError:
+                return np.array([0.0, 0.0, 0.0, 1.0], dtype='float64')
+
+        def rotate_vector(vector, quaternion):
+            q_conj = tf.transformations.quaternion_conjugate(quaternion)
+            vector = np.array(vector, dtype='float64')
+            vector = np.append(vector, [0.0])
+            vector = tf.transformations.quaternion_multiply(q_conj, vector)
+            vector = tf.transformations.quaternion_multiply(vector, quaternion)
+            return vector[:3]
+
+        def get_dimensions(model):
+            dims = tuple(rospy.get_param("~onto_config/dimensions")[model])
+
+            # rotate bbox dimensions if necessary
+            # (this only works properly if model_transform is in 90 degree angles)
+            dims = rotate_vector(vector=dims, quaternion=get_model_transform(model))
+            dims = np.absolute(dims)
+
+            # scale to meters
+            CONVERT_SCALE_CM_TO_METERS = 100
+            dims /= CONVERT_SCALE_CM_TO_METERS
+            dims = tuple(dims)
+
+            return dims
+
+        return DefaultDictWithArgs(get_dimensions)
 
     def run(self):
         rate = rospy.Rate(2)
@@ -103,10 +148,11 @@ class KnowledgeBasePublisher:
 
             obj_msg.bbox.center = obj_msg.classification.pose.pose
 
-            # TODO: get mesh
-            obj_msg.bbox.size.x = 0.2
-            obj_msg.bbox.size.y = 0.2
-            obj_msg.bbox.size.z = 0.2
+            model = symbol.rsplit(sep='_', maxsplit=1)[0]
+            dims = self._dimensions[model]
+            obj_msg.bbox.size.x = dims[0]
+            obj_msg.bbox.size.y = dims[1]
+            obj_msg.bbox.size.z = dims[2]
 
             anchored_objects_msg.objects.append(obj_msg)
 
