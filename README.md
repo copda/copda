@@ -73,7 +73,7 @@ First, [install ROS](http://wiki.ros.org/ROS/Installation). Then:
 # create a catkin workspace and clone all required ROS packages
 mkdir -p ~/catkin_ws/src
 cd ~/catkin_ws/src/
-git clone -b noetic git@git.ni.dfki.de:copda/copda.git
+git clone -b noetic https://github.com/copda/copda.git
 
 copda/install-deps.sh
 copda/build.sh
