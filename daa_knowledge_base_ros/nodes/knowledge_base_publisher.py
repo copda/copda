@@ -29,14 +29,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import rospy
-import rospkg
 import json
 from collections import defaultdict
 from object_pose_msgs.msg import ObjectList, ObjectPose
 from daa_msgs.msg import AnchoredObjectArray, AnchoredObject
 from daa_knowledge_base_ros.srv import Query, QueryRequest
-
-rospack = rospkg.RosPack()
 
 
 class KnowledgeBasePublisher:
