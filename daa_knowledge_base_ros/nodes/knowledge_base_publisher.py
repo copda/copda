@@ -47,7 +47,7 @@ class KnowledgeBasePublisher:
         self._pub_anchored_objects = rospy.Publisher('anchored_objects', AnchoredObjectArray, queue_size=10)
 
         def next_instance_id():
-            return len(self._instance_ids)
+            return len(self._instance_ids) + 1
 
         self._instance_ids = defaultdict(next_instance_id)
 
