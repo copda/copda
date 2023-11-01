@@ -31,7 +31,6 @@
 import rospy
 import json
 import numpy as np
-from collections import defaultdict
 from object_pose_msgs.msg import ObjectList, ObjectPose
 from daa_msgs.msg import AnchoredObjectArray, AnchoredObject
 from daa_knowledge_base_ros.srv import Query, QueryRequest
@@ -47,11 +46,6 @@ class KnowledgeBasePublisher:
         self._query_service_proxy = rospy.ServiceProxy(query_service_name, Query)
         self._pub_object_list = rospy.Publisher('object_list', ObjectList, queue_size=10)
         self._pub_anchored_objects = rospy.Publisher('anchored_objects', AnchoredObjectArray, queue_size=10)
-
-        def next_instance_id():
-            return len(self._instance_ids) + 1
-
-        self._instance_ids = defaultdict(next_instance_id)
         self._dimensions = self._make_dimensions()
 
     def _make_dimensions(self):
@@ -122,7 +116,7 @@ class KnowledgeBasePublisher:
             if anchored_objects_msg.header.stamp < obj_msg.header.stamp:
                 anchored_objects_msg.header.stamp = obj_msg.header.stamp
 
-            obj_msg.instance_id = self._instance_ids[symbol]
+            obj_msg.instance_id = int(symbol.rsplit(sep='_', maxsplit=1)[1])
             obj_msg.name = symbol
 
             latest_percept = percepts
