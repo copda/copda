@@ -13,7 +13,6 @@
 
   <depend>rospy</depend>
 
-  <build_depend>grpc</build_depend>
   <build_depend>message_generation</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>roslaunch</build_depend>

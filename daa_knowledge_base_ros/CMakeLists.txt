@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.5.1)
 project(daa_knowledge_base_ros)
 
 find_package(catkin REQUIRED COMPONENTS
-  grpc
   message_generation
   roscpp
   roslaunch
