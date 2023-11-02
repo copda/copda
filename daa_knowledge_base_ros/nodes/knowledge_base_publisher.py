@@ -91,7 +91,7 @@ class KnowledgeBasePublisher:
         return DefaultDictWithArgs(get_dimensions)
 
     def run(self):
-        rate = rospy.Rate(2)
+        rate = rospy.Rate(0.5)
         while not rospy.is_shutdown():
             self._publish()
             rate.sleep()
