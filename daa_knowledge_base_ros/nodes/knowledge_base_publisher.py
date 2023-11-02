@@ -34,7 +34,6 @@ import numpy as np
 from object_pose_msgs.msg import ObjectList, ObjectPose
 from daa_msgs.msg import AnchoredObjectArray, AnchoredObject
 from daa_knowledge_base_ros.srv import Query, QueryRequest
-from std_srvs.srv import Trigger
 import tf.transformations
 
 
@@ -42,17 +41,9 @@ class KnowledgeBasePublisher:
     def __init__(self, config) -> None:
         self._config = config
         query_service_name = 'daa_knowledge_base/query'
+        self._query_service_name = query_service_name
         rospy.wait_for_service(query_service_name)
         self._query_service_proxy = rospy.ServiceProxy(query_service_name, Query)
-
-        clear_service_name = '/pick_pose_selector_node/pose_selector_clear'
-        try:
-            rospy.wait_for_service(clear_service_name, timeout=10.0)
-            self._clear_service_proxy = rospy.ServiceProxy(clear_service_name, Trigger)
-        except rospy.ROSException:
-            rospy.logwarn("Timeout while waiting for service %s, continuing without clearing!", clear_service_name)
-            self._clear_service_proxy = None
-
         self._pub_object_list = rospy.Publisher('object_list', ObjectList, queue_size=10)
         self._pub_anchored_objects = rospy.Publisher('anchored_objects', AnchoredObjectArray, queue_size=10)
         self._dimensions = self._make_dimensions()
@@ -115,11 +106,6 @@ class KnowledgeBasePublisher:
         except rospy.ServiceException as e:
             print("Service call failed: %s" % e)
             return
-        try:
-            if self._clear_service_proxy:
-                self._clear_service_proxy()
-        except rospy.ServiceException as e:
-            rospy.logwarn("Service call failed: %s" % e)
         anchored_objects_msg = AnchoredObjectArray()
         anchored_objects_msg.header.frame_id = self._config["global_frame"]
         pose_selector_objects_msgs = ObjectList()
