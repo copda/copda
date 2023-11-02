@@ -1,5 +1,7 @@
 <?xml version="1.0" ?>
 <launch>
+  <arg name="service_prefix" default="/pick_pose_selector_node" />
+
   <group ns="mobipick">
     <node name="daa_knowledge_base" pkg="daa_knowledge_base_ros" type="knowledge_base_server.py" output="screen" clear_params="true">
       <!-- <param name="config_filename"          value="$(find daa_tracker_ros)/config/mht_config_maker_space.yaml" /> -->
@@ -14,6 +16,15 @@
       <rosparam file="$(find pbr_objects)/config/dimensions.yaml" param="onto_config"/>
       <rosparam file="$(find pbr_objects)/config/model_transforms.yaml"/>
       <rosparam file="$(find pbr_objects)/config/class_ids.yaml"/>
+
+      <remap from="~pose_selector_query"       to="$(arg service_prefix)/pose_selector_query"/>
+      <remap from="~pose_selector_class_query" to="$(arg service_prefix)/pose_selector_class_query"/>
+      <remap from="~pose_selector_update"      to="$(arg service_prefix)/pose_selector_update"/>
+      <remap from="~pose_selector_delete"      to="$(arg service_prefix)/pose_selector_delete"/>
+      <remap from="~pose_selector_save"        to="$(arg service_prefix)/pose_selector_save"/>
+      <remap from="~pose_selector_activate"    to="$(arg service_prefix)/pose_selector_activate"/>
+      <remap from="~pose_selector_get_all"     to="$(arg service_prefix)/pose_selector_get_all"/>
+      <remap from="~pose_selector_clear"       to="$(arg service_prefix)/pose_selector_clear"/>
     </node>
 
   </group>
