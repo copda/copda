@@ -35,6 +35,24 @@ from object_pose_msgs.msg import ObjectList, ObjectPose
 from daa_msgs.msg import AnchoredObjectArray, AnchoredObject
 from daa_knowledge_base_ros.srv import Query, QueryRequest
 import tf.transformations
+from pose_selector.srv import ClassQuery, ConfigSave, GetPoses, PoseDelete, PoseQuery, PoseUpdate
+from pose_selector.srv import (
+    ClassQueryResponse,
+    ConfigSaveResponse,
+    GetPosesResponse,
+    PoseDeleteResponse,
+    PoseQueryResponse,
+    PoseUpdateResponse,
+)
+from pose_selector.srv import (
+    ClassQueryRequest,
+    ConfigSaveRequest,
+    GetPosesRequest,
+    PoseDeleteRequest,
+    PoseQueryRequest,
+    PoseUpdateRequest,
+)
+from std_srvs.srv import SetBool, SetBoolResponse, SetBoolRequest, Trigger, TriggerResponse, TriggerRequest
 
 
 class KnowledgeBasePublisher:
@@ -47,6 +65,63 @@ class KnowledgeBasePublisher:
         self._pub_object_list = rospy.Publisher('object_list', ObjectList, queue_size=10)
         self._pub_anchored_objects = rospy.Publisher('anchored_objects', AnchoredObjectArray, queue_size=10)
         self._dimensions = self._make_dimensions()
+
+        self._query_service = rospy.Service("pose_selector_query", PoseQuery, self._callbackPoseQuery)
+        self._class_query_service = rospy.Service("pose_selector_class_query", ClassQuery, self._callbackClassQuery)
+        self._update_service = rospy.Service("pose_selector_update", PoseUpdate, self._callbackPoseUpdate)
+        self._delete_service = rospy.Service("pose_selector_delete", PoseDelete, self._callbackPoseDelete)
+        self._save_service = rospy.Service("pose_selector_save", ConfigSave, self._callbackSave)
+        self._record_activate_service = rospy.Service("pose_selector_activate", SetBool, self._activateRecording)
+        self._get_all_poses_service = rospy.Service("pose_selector_get_all", GetPoses, self._getAllPoses)
+        self._pose_selector_clear = rospy.Service("pose_selector_clear", Trigger, self._clearPoseSelector)
+
+    def _callbackPoseQuery(self, req: PoseQueryRequest):
+        res = PoseQueryResponse()
+        # TODO: implement (used by symbolic_fact_generation)
+        rospy.logerr("Service pose_selector_query not implemented")
+        return res
+
+    def _callbackClassQuery(self, req: ClassQueryRequest):
+        res = ClassQueryResponse()
+        # TODO: implement (used by symbolic_fact_generation, grasplan, tables_demo_planning)
+        rospy.logerr("Service pose_selector_class_query not implemented")
+        return res
+
+    def _callbackPoseUpdate(self, req: PoseUpdateRequest):
+        res = PoseUpdateResponse()
+        # TODO: implement later (not used)
+        rospy.logerr("Service pose_selector_update not implemented")
+        return res
+
+    def _callbackPoseDelete(self, req: PoseDeleteRequest):
+        res = PoseDeleteResponse()
+        # TODO: implement (used by grasplan, tables_demo_planning)
+        rospy.logerr("Service pose_selector_delete not implemented")
+        return res
+
+    def _callbackSave(self, req: ConfigSaveRequest):
+        # This service does not need to be implemented, does not apply.
+        res = ConfigSaveResponse()
+        rospy.logwarn("Service pose_selector_save not implemented")
+        return res
+
+    def _activateRecording(self, req: SetBoolRequest):
+        res = SetBoolResponse()
+        # TODO: implement (used by grasplan, tables_demo_planning)
+        rospy.logerr("Service pose_selector_activate not implemented")
+        return res
+
+    def _getAllPoses(self, req: GetPosesRequest):
+        res = GetPosesResponse()
+        # TODO: implement (used by grasplan, rqt_tables_demo)
+        rospy.logerr("Service pose_selector_get_all not implemented")
+        return res
+
+    def _clearPoseSelector(self, req: TriggerRequest):
+        res = TriggerResponse()
+        # TODO: implement (used by grasplan, rqt_tables_demo)
+        rospy.logerr("Service pose_selector_clear not implemented")
+        return res
 
     def _make_dimensions(self):
         class DefaultDictWithArgs(dict):

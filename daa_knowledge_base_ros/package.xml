@@ -24,10 +24,12 @@
   <exec_depend>daa_tools</exec_depend>
   <exec_depend>message_runtime</exec_depend>
   <exec_depend>pbr_objects</exec_depend>
+  <exec_depend>pose_selector</exec_depend>
   <exec_depend>python3-numpy</exec_depend>
   <exec_depend>python3-owlready2-pip</exec_depend>
   <exec_depend>python3-rospkg</exec_depend>
   <exec_depend>python3-simplejson</exec_depend>
+  <exec_depend>std_srvs</exec_depend>
   <exec_depend>swi-prolog</exec_depend>
   <exec_depend>tf</exec_depend>
 </package>
