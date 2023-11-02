@@ -81,7 +81,7 @@ class KBClient_ROS(KBClient):
             req_data = json.dumps(req_data)
         elif type == KBUpdateType.COMMIT_UPDATES:
             header = UpdateRequest.COMMIT_UPDATES
-            req_data = None
+            req_data = data
         else:
             raise rospy.ServiceException("update request type not defined")
         try:

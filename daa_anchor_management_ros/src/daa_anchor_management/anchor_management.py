@@ -94,6 +94,7 @@ class AnchorManagement:
         self.track2anchor: dict = {}
         self.symbol2anchor: dict = {}
         self.match_function = MatchFunction(kb_client)
+        self.timestamp = 0.0
         # TODO
         self.config: dict = {}
         self.kb_client: KBClient = kb_client
@@ -110,8 +111,9 @@ class AnchorManagement:
         self.track_buffer.append(tracks)
         logging.debug(f"track buffer size: {len(self.track_buffer)}")
 
-    def run_once(self):
+    def run_once(self, timestamp):
         """Run one iteration of the algorithm. This is the main entry point for the algorithm."""
+        self.timestamp = timestamp
         self._detect_inactive_anchors()
         self._update_anchor_percepts()
         self._infer_anchor_percepts()
@@ -324,7 +326,7 @@ class AnchorManagement:
             # Update the active anchor
             elif not anchor.is_lost() and not anchor.is_deactivated():
                 self.kb_client.update(type=KBUpdateType.UPDATE_INSTANCE, data=anchor.percepts, symbol=anchor.symbol)
-        self.kb_client.update(type=KBUpdateType.COMMIT_UPDATES, data=None)
+        self.kb_client.update(type=KBUpdateType.COMMIT_UPDATES, data=str(self.timestamp))
 
     def _decode_percepts(self, msg: dict) -> dict:
         """

@@ -111,6 +111,7 @@ class KBHandle:
             logging.warning("Unknown scenario!")
             raise RuntimeError
         self.object_count = {}
+        self.timestamp = 0.0
         self.object_max_count = config.get("max_count")
         # Tables are specified in the global_frame.
         if config.get("table_locations") and config.get("table_sizes"):
@@ -131,7 +132,9 @@ class KBHandle:
         ret = {}
         with self.onto_lock:
             for onto_object in self.onto.Object.instances():
-                ret.update({onto_object.name: onto_object.percept_history[-1]})
+                percepts = onto_object.percept_history[-1]
+                # if self.timestamp <= percepts['timestamp']:
+                ret.update({onto_object.name: percepts})
         return ret
 
     def get_instance_count(self, class_id: str):
@@ -144,8 +147,9 @@ class KBHandle:
             logging.error(f"{class_id} not exists in the ontology")
             return {"current_count": int(-1), "max_count": int(-1)}
 
-    def handle_commit_updates(self):
+    def handle_commit_updates(self, timestamp):
         with self.onto_lock:
+            self.timestamp = timestamp
             self._commit_updates()
 
     def handle_create_instance(self, percepts: dict):

@@ -69,7 +69,8 @@ class KnowledgeBaseServer:
                 rospy.loginfo(f"update instance: {symbol}")
                 return UpdateResponse()
             elif req.header == UpdateRequest.COMMIT_UPDATES:
-                self.kb_handle.handle_commit_updates()
+                timestamp = float(req.data)
+                self.kb_handle.handle_commit_updates(timestamp)
                 return UpdateResponse()
 
         except Exception as e:  # TODO

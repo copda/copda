@@ -63,7 +63,7 @@ class AnchorManagementNode:
             tracks.append({'track_id': track_id, 'percepts': percepts})
         # Run the AM once
         self.anchor_management.add_tracks(tracks)
-        self.anchor_management.run_once()
+        self.anchor_management.run_once(timestamp=track_array_msg.header.stamp.to_sec())
 
 
 if __name__ == '__main__':
