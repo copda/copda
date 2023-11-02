@@ -67,14 +67,14 @@ class KnowledgeBasePublisher:
         self._dimensions = self._make_dimensions()
 
         self._object_poses = ObjectList()
-        self._query_service = rospy.Service("pose_selector_query", PoseQuery, self._callbackPoseQuery)
-        self._class_query_service = rospy.Service("pose_selector_class_query", ClassQuery, self._callbackClassQuery)
-        self._update_service = rospy.Service("pose_selector_update", PoseUpdate, self._callbackPoseUpdate)
-        self._delete_service = rospy.Service("pose_selector_delete", PoseDelete, self._callbackPoseDelete)
-        self._save_service = rospy.Service("pose_selector_save", ConfigSave, self._callbackSave)
-        self._record_activate_service = rospy.Service("pose_selector_activate", SetBool, self._activateRecording)
-        self._get_all_poses_service = rospy.Service("pose_selector_get_all", GetPoses, self._getAllPoses)
-        self._pose_selector_clear = rospy.Service("pose_selector_clear", Trigger, self._clearPoseSelector)
+        self._query_service = rospy.Service("~pose_selector_query", PoseQuery, self._callbackPoseQuery)
+        self._class_query_service = rospy.Service("~pose_selector_class_query", ClassQuery, self._callbackClassQuery)
+        self._update_service = rospy.Service("~pose_selector_update", PoseUpdate, self._callbackPoseUpdate)
+        self._delete_service = rospy.Service("~pose_selector_delete", PoseDelete, self._callbackPoseDelete)
+        self._save_service = rospy.Service("~pose_selector_save", ConfigSave, self._callbackSave)
+        self._record_activate_service = rospy.Service("~pose_selector_activate", SetBool, self._activateRecording)
+        self._get_all_poses_service = rospy.Service("~pose_selector_get_all", GetPoses, self._getAllPoses)
+        self._pose_selector_clear = rospy.Service("~pose_selector_clear", Trigger, self._clearPoseSelector)
 
     def _callbackPoseQuery(self, req: PoseQueryRequest):
         res = PoseQueryResponse()
