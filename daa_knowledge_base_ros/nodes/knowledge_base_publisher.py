@@ -33,7 +33,7 @@ import json
 import numpy as np
 from object_pose_msgs.msg import ObjectList, ObjectPose
 from daa_msgs.msg import AnchoredObjectArray, AnchoredObject
-from daa_knowledge_base_ros.srv import Query, QueryRequest
+from daa_knowledge_base_ros.srv import Query, QueryRequest, Update, UpdateRequest
 import tf.transformations
 from pose_selector.srv import ClassQuery, ConfigSave, GetPoses, PoseDelete, PoseQuery, PoseUpdate
 from pose_selector.srv import (
@@ -58,10 +58,15 @@ from std_srvs.srv import SetBool, SetBoolResponse, SetBoolRequest, Trigger, Trig
 class KnowledgeBasePublisher:
     def __init__(self, config) -> None:
         self._config = config
+
         query_service_name = 'daa_knowledge_base/query'
-        self._query_service_name = query_service_name
         rospy.wait_for_service(query_service_name)
         self._query_service_proxy = rospy.ServiceProxy(query_service_name, Query)
+
+        update_service_name = 'daa_knowledge_base/update'
+        rospy.wait_for_service(update_service_name)
+        self._update_service_proxy = rospy.ServiceProxy(update_service_name, Update)
+
         self._pub_object_list = rospy.Publisher('object_list', ObjectList, queue_size=10)
         self._pub_anchored_objects = rospy.Publisher('anchored_objects', AnchoredObjectArray, queue_size=10)
         self._dimensions = self._make_dimensions()
@@ -99,7 +104,8 @@ class KnowledgeBasePublisher:
 
     def _callbackPoseDelete(self, req: PoseDeleteRequest):
         res = PoseDeleteResponse()
-        # TODO ZY: also remove from knowledge base!
+        symbol = f"['{req.class_id}_{str(req.instance_id)}']"
+        self._update_service_proxy(header=UpdateRequest.DEACTIVATE_INSTANCES, data=symbol)
         for obj in self._object_poses.objects:
             if obj.class_id == req.class_id and obj.instance_id == req.instance_id:
                 self._object_poses.objects.remove(obj)
@@ -183,9 +189,9 @@ class KnowledgeBasePublisher:
 
     def _publish(self):
         try:
-            req = self._query_service_proxy(header=QueryRequest.GET_ALL_INSTANCES, data=None)
-            if req.data:
-                all_instances = json.loads(req.data)
+            res = self._query_service_proxy(header=QueryRequest.GET_ALL_INSTANCES, data=None)
+            if res.data:
+                all_instances = json.loads(res.data)
             else:
                 return
         except rospy.ServiceException as e:
