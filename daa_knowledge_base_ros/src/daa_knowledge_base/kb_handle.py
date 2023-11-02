@@ -132,9 +132,10 @@ class KBHandle:
         ret = {}
         with self.onto_lock:
             for onto_object in self.onto.Object.instances():
-                percepts = onto_object.percept_history[-1]
                 # if self.timestamp <= percepts['timestamp']:
-                ret.update({onto_object.name: percepts})
+                if not onto_object.is_deactivated():
+                    percepts = onto_object.percept_history[-1]
+                    ret.update({onto_object.name: percepts})
         return ret
 
     def get_instance_count(self, class_id: str):
@@ -171,6 +172,11 @@ class KBHandle:
             raise Exception(
                 "undefined class '{}'. Instance won't be created. Please update the ontology".format(class_id)
             )
+
+    def handle_deactivate_instances(self, symbol_list):
+        for symbol in symbol_list:
+            if self.onto[symbol] is not None:
+                self.onto[symbol].deactivate()
 
     def handle_update_instance(self, symbol: str, percepts: dict):
         if self.onto[symbol] is not None:

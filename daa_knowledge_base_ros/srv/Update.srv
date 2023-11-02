@@ -1,6 +1,7 @@
 uint8 CREATE_INSTANCE=0
 uint8 UPDATE_INSTANCE=1
 uint8 COMMIT_UPDATES=2
+uint8 DEACTIVATE_INSTANCES=3
 uint8 header
 string data
 ---

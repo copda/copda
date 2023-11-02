@@ -112,6 +112,7 @@ with onto:
         def init(self, percepts):
             self.percept_history = deque(maxlen=5)
             self.created_time = percepts["timestamp"]
+            self.deactivated = False
             self.update(percepts)
 
         def roll_back(self):
@@ -153,5 +154,14 @@ with onto:
             if (not self.timestamp) or self.timestamp < percepts["timestamp"]:
                 self._apply_percepts(percepts)
                 self.percept_history.append(percepts)
+
+        def deactivate(self):
+            self.deactivated = True
+
+        def activate(self):
+            self.deactivated = False
+
+        def is_deactivated(self):
+            return self.deactivated
 
     onto.relations_to_infer = [onto.contains, onto.supports]

@@ -68,6 +68,13 @@ class KnowledgeBaseServer:
                 self.kb_handle.handle_update_instance(symbol, percepts)
                 rospy.loginfo(f"update instance: {symbol}")
                 return UpdateResponse()
+            elif req.header == UpdateRequest.DEACTIVATE_INSTANCES:  # temp solution to handling negative obs
+                symbol_list = eval(req.data)
+                self.kb_handle.handle_deactivate_instances(symbol_list)
+                rospy.loginfo(f"deactivate instances: {symbol_list}")
+
+                return UpdateResponse()
+
             elif req.header == UpdateRequest.COMMIT_UPDATES:
                 timestamp = float(req.data)
                 self.kb_handle.handle_commit_updates(timestamp)
