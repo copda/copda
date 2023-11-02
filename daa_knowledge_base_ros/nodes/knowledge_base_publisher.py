@@ -66,6 +66,7 @@ class KnowledgeBasePublisher:
         self._pub_anchored_objects = rospy.Publisher('anchored_objects', AnchoredObjectArray, queue_size=10)
         self._dimensions = self._make_dimensions()
 
+        self._object_poses = ObjectList()
         self._query_service = rospy.Service("pose_selector_query", PoseQuery, self._callbackPoseQuery)
         self._class_query_service = rospy.Service("pose_selector_class_query", ClassQuery, self._callbackClassQuery)
         self._update_service = rospy.Service("pose_selector_update", PoseUpdate, self._callbackPoseUpdate)
@@ -77,49 +78,58 @@ class KnowledgeBasePublisher:
 
     def _callbackPoseQuery(self, req: PoseQueryRequest):
         res = PoseQueryResponse()
-        # TODO: implement (used by symbolic_fact_generation)
-        rospy.logerr("Service pose_selector_query not implemented")
+        for obj in self._object_poses.objects:
+            if obj.class_id == req.class_id and obj.instance_id == req.instance_id:
+                res.pose_query_result = obj
+                break
         return res
 
     def _callbackClassQuery(self, req: ClassQueryRequest):
         res = ClassQueryResponse()
-        # TODO: implement (used by symbolic_fact_generation, grasplan, tables_demo_planning)
-        rospy.logerr("Service pose_selector_class_query not implemented")
+        for obj in self._object_poses.objects:
+            if obj.class_id == req.class_id:
+                res.poses.append(obj)
         return res
 
     def _callbackPoseUpdate(self, req: PoseUpdateRequest):
         res = PoseUpdateResponse()
-        # TODO: implement later (not used)
+        # TODO: implement later? (not used)
         rospy.logerr("Service pose_selector_update not implemented")
         return res
 
     def _callbackPoseDelete(self, req: PoseDeleteRequest):
         res = PoseDeleteResponse()
-        # TODO: implement (used by grasplan, tables_demo_planning)
+        # TODO ZY: also remove from knowledge base!
+        for obj in self._object_poses.objects:
+            if obj.class_id == req.class_id and obj.instance_id == req.instance_id:
+                self._object_poses.objects.remove(obj)
+                break
         rospy.logerr("Service pose_selector_delete not implemented")
         return res
 
     def _callbackSave(self, req: ConfigSaveRequest):
         # This service does not need to be implemented, does not apply.
         res = ConfigSaveResponse()
-        rospy.logwarn("Service pose_selector_save not implemented")
+        rospy.loginfo("Service pose_selector_save not implemented")
         return res
 
     def _activateRecording(self, req: SetBoolRequest):
         res = SetBoolResponse()
-        # TODO: implement (used by grasplan, tables_demo_planning)
-        rospy.logerr("Service pose_selector_activate not implemented")
+        # TODO: implement later (used by grasplan, tables_demo_planning)
+        # However, we cannot implement this properly here. What this service *should* do is unsubscribe from the
+        # DOPE detected_objects topic if req.data == True (so that DOPE stops running and doesn't overheat the GPU),
+        # but we don't even subscribe to that topic here.
+        rospy.logwarn("Service pose_selector_activate not implemented")
         return res
 
     def _getAllPoses(self, req: GetPosesRequest):
         res = GetPosesResponse()
-        # TODO: implement (used by grasplan, rqt_tables_demo)
-        rospy.logerr("Service pose_selector_get_all not implemented")
+        res.poses = self._object_poses
         return res
 
     def _clearPoseSelector(self, req: TriggerRequest):
         res = TriggerResponse()
-        # TODO: implement (used by grasplan, rqt_tables_demo)
+        # TODO: implement later? (only used by rqt_tables_demo)
         rospy.logerr("Service pose_selector_clear not implemented")
         return res
 
@@ -238,6 +248,7 @@ class KnowledgeBasePublisher:
         pose_selector_objects_msgs.header = anchored_objects_msg.header
         self._pub_anchored_objects.publish(anchored_objects_msg)
         self._pub_object_list.publish(pose_selector_objects_msgs)
+        self._object_poses = pose_selector_objects_msgs
 
 
 if __name__ == "__main__":
