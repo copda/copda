@@ -14,7 +14,10 @@
   <build_depend>roslaunch</build_depend>
 
   <exec_depend>daa_anchor_management_ros</exec_depend>
+  <exec_depend>daa_color_classification</exec_depend>
   <exec_depend>daa_knowledge_base_ros</exec_depend>
+  <exec_depend>daa_tools</exec_depend>
   <exec_depend>daa_tracker_ros</exec_depend>
+  <exec_depend>pbr_objects</exec_depend>
   <exec_depend>rviz</exec_depend>
 </package>

@@ -1,6 +1,9 @@
 <?xml version="1.0" ?>
 <launch>
     <arg name="namespace" default="mobipick"/>
+    <arg name="class_ids_config"        default="$(find pbr_objects)/config/class_ids.yaml"        doc="Path to class ids config file"/>
+    <arg name="draw_colors_config"      default="$(find pbr_objects)/config/draw_colors.yaml"   doc="Path to marker draw colors config file"/>
+    <arg name="meshes_config"           default="$(find pbr_objects)/config/meshes.yaml"        doc="Path to meshes config file"/>
 
     <!-- set use_sim_time flag -->
     <param name="/use_sim_time" value="true"/>
@@ -10,4 +13,21 @@
     </group>
 
     <include file="$(find daa_bringup)/launch/bringup.launch"/>
+
+    <node name="color_classification_node" pkg="daa_color_classification" type="color_classification_node" output="screen"/>
+
+    <group ns="$(arg namespace)">
+      <node name="color_object_publisher" pkg="daa_color_classification" type="color_object_publisher.py" output="screen">
+        <rosparam file="$(arg class_ids_config)" />
+      </node>
+
+      <node name="detection3d_to_markers" pkg="daa_tools" type="detection3d_to_markers.py" output="screen">
+        <rosparam file="$(arg class_ids_config)" />
+        <rosparam file="$(arg draw_colors_config)" />
+        <rosparam file="$(arg meshes_config)" />
+
+        <remap from="detected_objects" to="detected_objects_plus_colorparts" />
+        <remap from="markers" to="markers_plus_colorparts" />
+      </node>
+    </group>
 </launch>
