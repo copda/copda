@@ -92,7 +92,8 @@ string TrackerConfig::get_class_name(size_t class_id)
     return class_name_map_[class_id].as<string>();
   else
   {
-    LOG(WARNING) << "Trying to query unknown class, please update 'class_name_map' in the config file";
+    LOG(WARNING) << "Trying to query unknown class '" << to_string(class_id)
+                 << "'  please update 'class_name_map' in the config file";
     return "unknown_" + to_string(class_id);
   }
 }
