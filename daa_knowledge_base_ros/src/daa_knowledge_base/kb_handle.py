@@ -113,6 +113,14 @@ class KBHandle:
         self.object_count = {}
         self.timestamp = 0.0
         self.object_max_count = config.get("max_count")
+        # parse dimensions
+        self.object_dimensions = onto_config.get("dimensions").copy()
+        if self.object_dimensions.get('unit') == 'cm':
+            self.object_dimensions['unit'] = 'm'
+            self.object_dimensions.update(
+                (key, np.array(dim) * 0.01 if isinstance(dim, list) else dim)
+                for key, dim in self.object_dimensions.items()
+            )
         # Tables are specified in the global_frame.
         if config.get("table_locations") and config.get("table_sizes"):
             table_locations = config.get("table_locations")
@@ -151,7 +159,8 @@ class KBHandle:
     def handle_commit_updates(self, timestamp):
         with self.onto_lock:
             self.timestamp = timestamp
-            self._commit_updates()
+            ret = self._commit_updates(perform_merging=True)
+        return ret
 
     def handle_create_instance(self, percepts: dict):
         class_id = percepts['class_id']
@@ -239,6 +248,8 @@ class KBHandle:
         else:
             instance = self.class_dict.get(class_id)()
         instance.init(percepts)
+        dimensions = self.object_dimensions.get(class_id)
+        instance.dimensions = self.onto.dimensions.from_list(dimensions)
         return instance
 
     def infer_relation_matrices(self, assignments):
@@ -339,7 +350,7 @@ class KBHandle:
 
     def get_relation_matrices(self):
         if self._updated:
-            self._commit_updates()
+            self._commit_updates(perform_merging=False)
         matrices = self._get_relation_matrices()
         return matrices
 
@@ -415,6 +426,59 @@ class KBHandle:
                                 with self.onto:
                                     setattr(obj_a, rel.name, None)
 
+    def _merge_duplicated_objects(self):
+        q = "is_a_duplicate_of(ObjA, ObjB)"
+        res = list(self.prolog.query(q))
+        matches = {}
+
+        for r in res:
+            obj_a = r["ObjA"]
+            obj_b = r["ObjB"]
+            if obj_a == obj_b:
+                continue
+            obj_a = self.onto.search(iri=obj_a)[0]
+            obj_b = self.onto.search(iri=obj_b)[0]
+            assert obj_a and obj_b
+            if (
+                obj_a in matches.keys()
+                or obj_a in matches.values()
+                or obj_b in matches.keys()
+                or obj_b in matches.values()
+            ):
+                pass
+            else:
+                matches.update(
+                    {
+                        obj_a: obj_b,
+                    }
+                )
+        if matches:
+            logging.info("found duplicates: ", matches)
+            disposal_objs = []
+            ret = {}
+            for obj_a, obj_b in matches.items():
+                if obj_a.created_time <= obj_b.created_time:
+                    with self.onto:
+                        obj_a.merge(obj_b)
+                        if obj_b not in disposal_objs:
+                            disposal_objs.append(obj_b)
+                            ret.update({obj_a.name: obj_b.name})
+                else:
+                    with self.onto:
+                        obj_b.merge(obj_a)
+                        if obj_a not in disposal_objs:
+                            disposal_objs.append(obj_a)
+                            ret.update({obj_b.name: obj_a.name})
+            for obj in disposal_objs:
+                with self.onto:
+                    logging.debug("destroy {}".format(obj.name))
+                    destroy_entity(obj)
+            self._synchronize_prolog()
+            self._infer_relations()
+            return ret
+        else:
+            return None
+
     def _merge_matches(self):
         q = "is_match(ObjA, ObjB)"
         res = list(self.prolog.query(q))
@@ -463,12 +527,15 @@ class KBHandle:
                     destroy_entity(obj)
             return ret
         else:
-            return None
+            return {}
 
-    def _commit_updates(self):
+    def _commit_updates(self, perform_merging=True):
         self._synchronize_prolog()
         self._infer_relations()
-        # self._synchronize_prolog()
+        if perform_merging:
+            duplicates = self._merge_duplicated_objects()
+        else:
+            duplicates = {}
         # matches = self._merge_matches()
         # self._synchronize_prolog()
         # self._infer_relations()
@@ -477,7 +544,8 @@ class KBHandle:
         self._updated = False
         # if matches:
         #     print(matches)
-        # return matches
+        ret = {"matches": duplicates if duplicates else {}}
+        return ret
 
     def _synchronize_prolog(self):
         self._my_world.as_rdflib_graph().serialize(destination=self._owl_file, format="xml")

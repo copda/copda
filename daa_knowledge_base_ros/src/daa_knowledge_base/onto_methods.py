@@ -100,6 +100,12 @@ with onto:
             else:
                 return None
 
+        def np_dimensions(self):
+            if self.dimensions:
+                return np.array(literal_eval(self.dimensions.replace(' ', ',')))
+            else:
+                return None
+
         def expected_position(self):
             pos = self.np_position()
             return pos

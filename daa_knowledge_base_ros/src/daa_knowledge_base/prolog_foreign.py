@@ -27,6 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from pyswip.easy import Atom, registerForeign
+import numpy as np
 import sys
 
 onto = None
@@ -88,6 +89,25 @@ def comp_close_enough(t1, t2):
         return False
 
 
+def comp_is_overlapping(t1, t2):
+    if not isinstance(t1, Atom) or not isinstance(t2, Atom):
+        return False
+    obj_a = onto.search(iri=t1.value)
+    obj_b = onto.search(iri=t2.value)
+    if not obj_a or not obj_b:
+        return False
+    obj_a = obj_a[0]
+    obj_b = obj_b[0]
+    # TODO: assert overlapping
+    d = obj_a.expected_distance_to(obj_b)
+    dim_a = np.max(obj_a.np_dimensions())
+    dim_b = np.max(obj_b.np_dimensions())
+    if d < 0.5 * (dim_a + dim_b):
+        return True
+    else:
+        return False
+
+
 def comp_confine(t1, t2):
     if not isinstance(t1, Atom) or not isinstance(t2, Atom):
         return False
@@ -110,6 +130,7 @@ def comp_not_confine(t1, t2):
 registerForeign(comp_close_enough, arity=2)
 registerForeign(comp_far_enough, arity=2)
 registerForeign(comp_confine, arity=2)
+registerForeign(comp_is_overlapping, arity=2)
 # registerForeign(comp_have_same_color, arity=2)
 
 # registerForeign(is_a, arity=2, flags=PL_FA_NONDETERMINISTIC)

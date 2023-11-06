@@ -59,7 +59,7 @@ class MatchFunction:
         current_count = instance_count.get('current_count')
         max_count = instance_count.get('max_count')
         if current_count >= 0 and max_count >= 0:
-            prob_new_instance = 1.0 if current_count < max_count else 0.0
+            prob_new_instance = 0.1 if current_count < max_count else 0.0
             prior = prob_new_instance * (1.0 / (table_num * table_size))
         else:  # no prior knowledge for maximum count
             prior = 1.0 / table_size

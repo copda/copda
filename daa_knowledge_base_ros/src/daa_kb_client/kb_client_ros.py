@@ -86,7 +86,10 @@ class KBClient_ROS(KBClient):
             raise rospy.ServiceException("update request type not defined")
         try:
             res = self.update_service_proxy(header=header, data=req_data)
-            return self._decode_update_response(res)
+            if type == KBUpdateType.COMMIT_UPDATES:
+                return json.loads(res.data)
+            else:
+                return self._decode_update_response(res)
         except rospy.ServiceException as e:
             print("Service call failed: %s" % e)
             return None

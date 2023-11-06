@@ -156,7 +156,10 @@ contains_or_empty(Obj, Item) :-
   %   ;
   %   writeln('they are not containers')
   % ).
-
+is_a_duplicate_of(ObjA, ObjB) :-
+  is_same_type(ObjA, ObjB),
+  ObjA \== ObjB,
+  comp_is_overlapping(ObjA, ObjB).
 % for matching empty containers assuming each table has only one container
 is_match(ObjA, ObjB) :-
   is_a(ObjA, onto:'Container'),

@@ -88,14 +88,17 @@ class Anchor:
 
         return time_forward and velocity_in_bound
 
-    def update_percepts(self, percepts: dict):
+    def merge(self, other):
+        self.update_percepts(percepts=other.percepts, hard_update=True)
+
+    def update_percepts(self, percepts: dict, hard_update=False):
         """
         Update anchor percepts.
 
         Args:
         ----
             percepts (dict): new percepts
-
+            hard_update (bool): update percepts regardless of the conditions
         Returns
         -------
             bool: True if the percepts are updated
@@ -103,7 +106,7 @@ class Anchor:
         """
         if self.percepts is not None:
             # Only update when the incoming percepts are newer
-            if self.is_update_plausible(percepts):
+            if hard_update or self.is_update_plausible(percepts):
                 self.history.append(self.percepts.copy())
                 self.percepts = percepts.copy()
                 self.timestamp = percepts['timestamp']

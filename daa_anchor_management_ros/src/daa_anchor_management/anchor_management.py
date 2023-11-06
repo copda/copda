@@ -326,7 +326,17 @@ class AnchorManagement:
             # Update the active anchor
             elif not anchor.is_lost() and not anchor.is_deactivated():
                 self.kb_client.update(type=KBUpdateType.UPDATE_INSTANCE, data=anchor.percepts, symbol=anchor.symbol)
-        self.kb_client.update(type=KBUpdateType.COMMIT_UPDATES, data=str(self.timestamp))
+        res = self.kb_client.update(type=KBUpdateType.COMMIT_UPDATES, data=str(self.timestamp))
+        self._merge_matches(res.get("matches"))
+
+    def _merge_matches(self, matches: dict):
+        for symbol_to_keep, symbol_to_discard in matches.items():
+            # TODO
+            self._update_anchor_mappings()
+            anchor_to_keep = self.symbol2anchor.get(symbol_to_keep)
+            anchor_to_discard = self.symbol2anchor.get(symbol_to_discard)
+            anchor_to_keep.merge(anchor_to_discard)
+            self.anchors.remove(anchor_to_discard)
 
     def _decode_percepts(self, msg: dict) -> dict:
         """

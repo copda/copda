@@ -77,8 +77,11 @@ class KnowledgeBaseServer:
 
             elif req.header == UpdateRequest.COMMIT_UPDATES:
                 timestamp = float(req.data)
-                self.kb_handle.handle_commit_updates(timestamp)
-                return UpdateResponse()
+                ret = self.kb_handle.handle_commit_updates(timestamp)
+                duplicates = ret.get("matches")
+                if duplicates:
+                    rospy.loginfo(f"found duplicates: {duplicates}")
+                return UpdateResponse(data=json.dumps(ret))
 
         except Exception as e:  # TODO
             rospy.logerr(e)
