@@ -15,11 +15,13 @@
   <build_depend>dynamic_reconfigure</build_depend>
   <build_depend>image_transport</build_depend>
   <build_depend>message_generation</build_depend>
+  <build_depend>object_pose_msgs</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>sensor_msgs</build_depend>
   <build_depend>std_msgs</build_depend>
   <build_depend>vision_msgs</build_depend>
 
+  <build_export_depend>object_pose_msgs</build_export_depend>
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>sensor_msgs</build_export_depend>
   <build_export_depend>std_msgs</build_export_depend>
@@ -29,6 +31,7 @@
   <exec_depend>dynamic_reconfigure</exec_depend>
   <exec_depend>image_transport</exec_depend>
   <exec_depend>message_runtime</exec_depend>
+  <exec_depend>object_pose_msgs</exec_depend>
   <exec_depend>roscpp</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>std_msgs</exec_depend>

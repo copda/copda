@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   dynamic_reconfigure
   image_transport
   message_generation
+  object_pose_msgs
   roscpp
   sensor_msgs
   std_msgs
@@ -78,6 +79,7 @@ add_message_files(
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
   DEPENDENCIES
+  object_pose_msgs
   sensor_msgs
   vision_msgs
 )
@@ -114,7 +116,7 @@ generate_dynamic_reconfigure_options(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES daa_color_classification
-  CATKIN_DEPENDS message_runtime roscpp sensor_msgs std_msgs vision_msgs
+  CATKIN_DEPENDS message_runtime object_pose_msgs roscpp sensor_msgs std_msgs vision_msgs
 #  DEPENDS system_lib
 )
 
@@ -165,6 +167,7 @@ target_link_libraries(${PROJECT_NAME}_node
 # in contrast to setup.py, you can choose the destination
 catkin_install_python(PROGRAMS
   nodes/color_object_publisher.py
+  nodes/fake_anchoring_node.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
