@@ -45,20 +45,19 @@
  */
 ColorClassifier::ColorClassifier(ros::NodeHandle* pNh) : pNh_(pNh), it_(*pNh)
 {
-  pSeg_image_sub_ = make_shared<message_filters::Subscriber<Image>>(*pNh_, "/mobipick/dope/instance_seg_image", 1);
-  pRgb_image_sub_ =
-      make_shared<message_filters::Subscriber<Image>>(*pNh_, "/mobipick/eef_main_cam/rgb/image_rect_color", 1);
-  pObj_detect_sub_ =
-      make_shared<message_filters::Subscriber<Detection3DArray>>(*pNh_, "/mobipick/dope/detected_objects", 1);
-  pCam_info_sub_ =
-      make_shared<message_filters::Subscriber<CameraInfo>>(*pNh_, "/mobipick/eef_main_cam/rgb/camera_info", 1);
+  pSeg_image_sub_ = make_shared<message_filters::Subscriber<Image>>();
+  pRgb_image_sub_ = make_shared<message_filters::Subscriber<Image>>();
+  pObj_detect_sub_ = make_shared<message_filters::Subscriber<Detection3DArray>>();
+  pCam_info_sub_ = make_shared<message_filters::Subscriber<CameraInfo>>();
 
   pSync_ = std::make_shared<message_filters::TimeSynchronizer<Image, Image, Detection3DArray, CameraInfo>>(
       *pSeg_image_sub_, *pRgb_image_sub_, *pObj_detect_sub_, *pCam_info_sub_, 10);
   pSync_->registerCallback(boost::bind(&ColorClassifier::image_callback, this, _1, _2, _3, _4));
 
-  pResult_pub_ = make_shared<ros::Publisher>(
-      pNh->advertise<daa_color_classification::ColorClassificationResults>("/mobipick/color_classification", 1));
+  pResult_pub_ = make_shared<ros::Publisher>(pNh->advertise<daa_color_classification::ColorClassificationResults>(
+      "/mobipick/color_classification", 1, boost::bind(&ColorClassifier::subscriptionCallback, this),
+      boost::bind(&ColorClassifier::unsubscriptionCallback, this)));
+
   image_pub_ = it_.advertise("debug_image", 10);
 
   pParam_server_ = std::make_shared<dynamic_reconfigure::Server<daa_color_classification::ColorClassificationConfig>>();
@@ -67,6 +66,25 @@ ColorClassifier::ColorClassifier(ros::NodeHandle* pNh) : pNh_(pNh), it_(*pNh)
   constructColorTable();
 
   pSpinner_ = std::make_shared<ros::AsyncSpinner>(1);
+}
+
+void ColorClassifier::subscriptionCallback()
+{
+  pSeg_image_sub_->subscribe(*pNh_, "/mobipick/dope/instance_seg_image", 1);
+  pRgb_image_sub_->subscribe(*pNh_, "/mobipick/eef_main_cam/rgb/image_rect_color", 1);
+  pObj_detect_sub_->subscribe(*pNh_, "/mobipick/dope/detected_objects", 1);
+  pCam_info_sub_->subscribe(*pNh_, "/mobipick/eef_main_cam/rgb/camera_info", 1);
+}
+
+void ColorClassifier::unsubscriptionCallback()
+{
+  if (pResult_pub_->getNumSubscribers() == 0)
+  {
+    pSeg_image_sub_->unsubscribe();
+    pRgb_image_sub_->unsubscribe();
+    pObj_detect_sub_->unsubscribe();
+    pCam_info_sub_->unsubscribe();
+  }
 }
 
 /**

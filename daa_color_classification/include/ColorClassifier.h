@@ -130,6 +130,8 @@ public:
 
 private:
   /* callback functions */
+  void subscriptionCallback();
+  void unsubscriptionCallback();
   void image_callback(const ImageConstPtr& seg_image, const ImageConstPtr& rgb_image,
                       const Detection3DArrayConstPtr& detected_objs, const CameraInfoConstPtr& cam_info);
   void parameter_callback(daa_color_classification::ColorClassificationConfig& config, uint32_t level);

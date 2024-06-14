@@ -53,14 +53,38 @@ class ColorObjectPublisherNode:
         # parameters
         self._class_ids = rospy.get_param('~class_ids')
 
-        # publishers
-        self._pub_detected_objs = rospy.Publisher('detected_objects_plus_colorparts', Detection3DArray, queue_size=10)
+        sub_listener = rospy.SubscribeListener()
+        sub_listener.peer_subscribe = self.subscription_cb
+        sub_listener.peer_unsubscribe = self.unsubscription_cb
 
-        # subscribers
-        detected_objs_sub = message_filters.Subscriber('dope/detected_objects', Detection3DArray)
-        color_classification_sub = message_filters.Subscriber('color_classification', ColorClassificationResults)
-        ts = message_filters.TimeSynchronizer([detected_objs_sub, color_classification_sub], queue_size=100)
-        ts.registerCallback(self._msg_callback)
+        # publishers
+        self._pub_detected_objs = rospy.Publisher(
+            'detected_objects_plus_colorparts', Detection3DArray, queue_size=10, subscriber_listener=sub_listener
+        )
+
+        # Subscriber variables
+        self.detected_objs_sub = None
+        self.color_classification_sub = None
+        self.ts = None
+
+    def subscription_cb(self, topic_name, topic_publish, peer_publish):
+        if self.detected_objs_sub is None and self.color_classification_sub is None and self.ts is None:
+            self.detected_objs_sub = message_filters.Subscriber('dope/detected_objects', Detection3DArray)
+            self.color_classification_sub = message_filters.Subscriber(
+                'color_classification', ColorClassificationResults
+            )
+            self.ts = message_filters.TimeSynchronizer(
+                [self.detected_objs_sub, self.color_classification_sub], queue_size=100
+            )
+            self.ts.registerCallback(self._msg_callback)
+
+    def unsubscription_cb(self, topic_name, num_peers):
+        if num_peers == 0:
+            self.detected_objs_sub.sub.unregister()
+            self.detected_objs_sub = None
+            self.color_classification_sub.sub.unregister()
+            self.color_classification_sub = None
+            self.ts = None
 
     def _msg_callback(self, detection_array: Detection3DArray, colors: ColorClassificationResults):
         output_msg = copy.deepcopy(detection_array)
