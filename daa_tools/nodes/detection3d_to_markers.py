@@ -66,10 +66,22 @@ class Detection3DToMarkersNode(object):
                 )
 
         # publishers
-        self.pub_markers = rospy.Publisher('markers', MarkerArray, queue_size=10)
+        sub_listener = rospy.SubscribeListener()
+        sub_listener.peer_subscribe = self.subscription_cb
+        sub_listener.peer_unsubscribe = self.unsubscription_cb
+        self.pub_markers = rospy.Publisher('markers', MarkerArray, queue_size=10, subscriber_listener=sub_listener)
 
         # subscribers
-        self.sub_det3d = rospy.Subscriber("detected_objects", Detection3DArray, self.detections_callback)
+        self.sub_det3d = None
+
+    def subscription_cb(self, topic_name, topic_publish, peer_publish):
+        if self.sub_det3d is None:
+            self.sub_det3d = rospy.Subscriber("detected_objects", Detection3DArray, self.detections_callback)
+
+    def unsubscription_cb(self, topic_name, num_peers):
+        if num_peers == 0:
+            self.sub_det3d.unregister()
+            self.sub_det3d = None
 
     def detections_callback(self, detections_msg):
         self.publish_markers(detections_msg, self.prev_num_detections)
