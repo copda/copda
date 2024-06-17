@@ -92,7 +92,9 @@ class FakeAnchoringNode:
             if det.results[0].id != self._class_ids['klt']:
                 continue
 
-            output_msg.objects.append(self._make_output_pose(det, colors))
+            output_pose = self._make_output_pose(det, colors)
+            if output_pose is not None:
+                output_msg.objects.append(output_pose)
 
         self._pub_object_list.publish(output_msg)
 
@@ -120,7 +122,12 @@ class FakeAnchoringNode:
 
         # "fake anchoring": assign instance ID based on maximum color of contents
         if max_color is None:
-            output_pose.instance_id = 0
+            # output_pose.instance_id = 0
+
+            # In the current demo, we never have empty KLTs, so any empty KLT is actually a KLT where we didn't
+            # recognize the color of the contents. This is never good and only provokes collisions with the real
+            # KLT once it's detected. Thus, filter out empty KLTs here.
+            return None
         else:
             output_pose.instance_id = COLORS_TO_INSTANCE_IDS[max_color]
 
