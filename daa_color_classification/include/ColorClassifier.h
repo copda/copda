@@ -159,9 +159,6 @@ private:
   /* parameter server, for dynamic parameter reconfiguration */
   shared_ptr<dynamic_reconfigure::Server<daa_color_classification::ColorClassificationConfig>> pParam_server_;
 
-  /* parameter for visualizing histograms */
-  shared_ptr<bool> visualize_histograms_;
-
   /* a look up table for the histogram */
   vector<Color::Type> color_table_;
 

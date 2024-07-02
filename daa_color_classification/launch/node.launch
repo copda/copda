@@ -3,5 +3,5 @@
 
   <node name="color_classification_node" pkg="daa_color_classification" type="color_classification_node" output="screen" ns="mobipick">
     <param name="visualize_histograms" value="$(arg visualize_histograms)"/>
-  <node/>
+  </node>
 </launch>
