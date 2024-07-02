@@ -86,12 +86,6 @@ class FakeAnchoringNode:
         output_msg = ObjectList()
         output_msg.header = detection_array.header
         for det, colors in zip(detection_array.detections, colors.colors):
-            if len(det.results) != 1:
-                rospy.logerr('Expected exactly 1 object hypothesis per detection, got %d', len(det.results))
-                continue
-            if det.results[0].id != self._class_ids['klt']:
-                continue
-
             output_pose = self._make_output_pose(det, colors)
             if output_pose is not None:
                 output_msg.objects.append(output_pose)
@@ -101,35 +95,42 @@ class FakeAnchoringNode:
     def _make_output_pose(self, det: Detection3D, colors: Colors):
         output_pose = ObjectPose()
 
+        if len(det.results) != 1:
+            rospy.logerr('Expected exactly 1 object hypothesis per detection, got %d', len(det.results))
+            return None
         object_hypothesis = det.results[0]
+
         output_pose.pose = object_hypothesis.pose.pose
         output_pose.size = det.bbox.size
         # output_pose.min and output_pose.max left empty (not used)
         class_id_to_name = {class_id: name for name, class_id in self._class_ids.items()}
         output_pose.class_id = class_id_to_name[object_hypothesis.id]
 
-        # find maximum color
-        max_color = None
-        max_intensity = float('-inf')
-        for color, intensity in zip(colors.colors, colors.intensities):
-            if intensity == 0.0:
-                continue
-            if color not in COLORS_TO_INSTANCE_IDS:  # should only be "Blue"
-                continue
-            if max_intensity < intensity:
-                max_intensity = intensity
-                max_color = color
+        # "fake anchoring": for KLTs, determine the instance ID based on the color of the contents;
+        # for everything else, leave id = 0
+        if det.results[0].id == self._class_ids['klt']:
+            # find maximum color
+            max_color = None
+            max_intensity = float('-inf')
+            for color, intensity in zip(colors.colors, colors.intensities):
+                if intensity == 0.0:
+                    continue
+                if color not in COLORS_TO_INSTANCE_IDS:  # should only be "Blue"
+                    continue
+                if max_intensity < intensity:
+                    max_intensity = intensity
+                    max_color = color
 
-        # "fake anchoring": assign instance ID based on maximum color of contents
-        if max_color is None:
-            # output_pose.instance_id = 0
+            # "fake anchoring": assign instance ID based on maximum color of contents
+            if max_color is None:
+                # output_pose.instance_id = 0
 
-            # In the current demo, we never have empty KLTs, so any empty KLT is actually a KLT where we didn't
-            # recognize the color of the contents. This is never good and only provokes collisions with the real
-            # KLT once it's detected. Thus, filter out empty KLTs here.
-            return None
-        else:
-            output_pose.instance_id = COLORS_TO_INSTANCE_IDS[max_color]
+                # In the current demo, we never have empty KLTs, so any empty KLT is actually a KLT where we didn't
+                # recognize the color of the contents. This is never good and only provokes collisions with the real
+                # KLT once it's detected. Thus, filter out empty KLTs here.
+                return None
+            else:
+                output_pose.instance_id = COLORS_TO_INSTANCE_IDS[max_color]
 
         return output_pose
 
