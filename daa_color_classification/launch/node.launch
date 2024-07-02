@@ -1,3 +1,7 @@
 <launch>
-  <node name="color_classification_node" pkg="daa_color_classification" type="color_classification_node" output="screen" ns="mobipick" />
+  <arg name="visualize_histograms" default="true" doc="Set to true to visualize the color histograms using cv::imshow"/>
+
+  <node name="color_classification_node" pkg="daa_color_classification" type="color_classification_node" output="screen" ns="mobipick">
+    <param name="visualize_histograms" value="$(arg visualize_histograms)"/>
+  <node/>
 </launch>

@@ -63,6 +63,9 @@ ColorClassifier::ColorClassifier(ros::NodeHandle* pNh) : pNh_(pNh), it_(*pNh)
   pParam_server_ = std::make_shared<dynamic_reconfigure::Server<daa_color_classification::ColorClassificationConfig>>();
   pParam_server_->setCallback(boost::bind(&ColorClassifier::parameter_callback, this, _1, _2));
 
+  visualize_histograms_ = std::make_shared<bool>();
+  pNh->param<bool>("visualize_histograms", *visualize_histograms_, false);
+
   constructColorTable();
 
   pSpinner_ = std::make_shared<ros::AsyncSpinner>(1);
@@ -117,7 +120,9 @@ void ColorClassifier::image_callback(const ImageConstPtr& seg_image, const Image
 
     classifyColor(vecHist, all_object_colors, all_object_intensities);
 
-    visualizeHist(vecHist, 10);
+    if (*visualize_histograms_) {
+      visualizeHist(vecHist, 10);
+    }
 
     publishResults(rgb_cv_ptr, all_object_colors, all_object_intensities, vecObj, bboxes, vecHist);
   }

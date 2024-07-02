@@ -40,7 +40,7 @@
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "color_classification_node");
-  ros::NodeHandle nh;
+  ros::NodeHandle nh("~");
 
   ColorClassifier ccl(&nh);
 
