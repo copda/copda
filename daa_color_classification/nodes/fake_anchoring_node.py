@@ -30,6 +30,7 @@
 
 import message_filters
 import rospy
+from itertools import zip_longest
 from daa_color_classification.msg import ColorClassificationResults, Colors
 from object_pose_msgs.msg import ObjectList, ObjectPose
 from vision_msgs.msg import Detection3DArray, Detection3D
@@ -85,7 +86,7 @@ class FakeAnchoringNode:
     def _msg_callback(self, detection_array: Detection3DArray, colors: ColorClassificationResults):
         output_msg = ObjectList()
         output_msg.header = detection_array.header
-        for det, colors in zip(detection_array.detections, colors.colors):
+        for det, colors in zip_longest(detection_array.detections, colors.colors):
             output_pose = self._make_output_pose(det, colors)
             if output_pose is not None:
                 output_msg.objects.append(output_pose)
@@ -105,10 +106,11 @@ class FakeAnchoringNode:
         # output_pose.min and output_pose.max left empty (not used)
         class_id_to_name = {class_id: name for name, class_id in self._class_ids.items()}
         output_pose.class_id = class_id_to_name[object_hypothesis.id]
+        output_pose.instance_id = 1
 
         # "fake anchoring": for KLTs, determine the instance ID based on the color of the contents;
-        # for everything else, leave id = 0
-        if det.results[0].id == self._class_ids['klt']:
+        # for everything else, leave id = 1
+        if det.results[0].id == self._class_ids['klt'] and colors is not None:
             # find maximum color
             max_color = None
             max_intensity = float('-inf')
