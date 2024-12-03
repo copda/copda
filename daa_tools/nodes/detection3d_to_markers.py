@@ -150,7 +150,7 @@ class Detection3DToMarkersNode(object):
                 marker = Marker()
                 marker.header = detection_array.header
                 marker.action = Marker.ADD
-                marker.pose = det.bbox.center
+                marker.pose = det.results[0].pose.pose
                 marker.color = color_rgba
                 marker.color.a = 0.7
                 marker.ns = namespace_prefix + "meshes"
